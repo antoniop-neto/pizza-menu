@@ -67,37 +67,50 @@ function Header() {
     </header>
   );
 }
+// React fragment "<> </>" around multiple HTML elements . To add a key on this fragment it is necessary to use "<React.Fragment key="key-name"> </React.Fragment>"
 
 function Menu() {
   return (
     <main className="menu">
       <h2>Our menu</h2>
-      <Pizza
+
+      {pizzaData.length > 0 ? (
+        <>
+          <p>
+            Authentic Italian cuisine. {pizzaData.length} creative dishes to
+            choose from. All from our stone oven, all organic, all delicious.
+          </p>
+          <ul className="pizzas">
+            {pizzaData.map((pizza) => (
+              <Pizza pizzaObj={pizza} key={pizza.name} />
+            ))}
+          </ul>
+        </>
+      ) : (
+        <p>We're still working in our menu. Please, come back later :) </p>
+      )}
+
+      {/* <Pizza
         name="Pizza Spinaci"
         ingredients="Tomato, mozarella, spinach, and ricotta cheese"
         photoName="/pizzas/spinaci.jpg"
         price={10}
-      />
-      <Pizza
-        name="Pizza Funghi"
-        photoName="pizzas/funghi.jpg"
-        price={12}
-        ingredients="Tomato, mozarella, mushrooms, and onion"
-      />
+      /> */}
     </main>
   );
 }
-
-function Pizza(props) {
+// Destructuring props
+function Pizza({ pizzaObj }) {
+  // if (pizzaObj.soldOut) return null;
   return (
-    <div className="pizza">
-      <img src={props.photoName} alt={props.name} />
+    <li className={`pizza ${pizzaObj.soldOut ? "sold-out" : ""}`}>
+      <img src={pizzaObj.photoName} alt={pizzaObj.name} />
       <div>
-        <h3>{props.name}</h3>
-        <p>{props.ingredients}</p>
-        <span>{props.price + 3}</span>
+        <h3>{pizzaObj.name}</h3>
+        <p>{pizzaObj.ingredients}</p>
+        <span>{pizzaObj.soldOut ? "SOLD OUT" : pizzaObj.price}</span>
       </div>
-    </div>
+    </li>
   );
 }
 
@@ -111,11 +124,29 @@ function Footer() {
 
   return (
     <footer className="footer">
-      {new Date().toLocaleTimeString()}. We're currently open!
+      {isOpen ? (
+        <Order closeHour={closeHour} openHour={openHour} />
+      ) : (
+        <p>
+          We're happy to wellcome you between {openHour}:00 and {closeHour}:00
+        </p>
+      )}
     </footer>
   );
   // The way to create HTML elements without using JSX
   // return React.createElement("footer", null, "We're currently open!");
+}
+
+function Order({ closeHour, openHour }) {
+  return (
+    <div className="order">
+      <p>
+        We're from {openHour}:00 to {closeHour}:00. Come visit us or order
+        online
+      </p>
+      <button className="btn">Order</button>
+    </div>
+  );
 }
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
